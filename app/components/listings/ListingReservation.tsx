@@ -1,13 +1,11 @@
-'use client';
-
+"use client";
 import { Range } from "react-date-range";
-
 import Button from "../Button";
 import Calendar from "../inputs/Calendar";
 
 interface ListingReservationProps {
   price: number;
-  dateRange: Range,
+  dateRange: Range;
   totalPrice: number;
   onChangeDate: (value: Range) => void;
   onSubmit: () => void;
@@ -15,17 +13,15 @@ interface ListingReservationProps {
   disabledDates: Date[];
 }
 
-const ListingReservation: React.FC<
-  ListingReservationProps
-> = ({
+const ListingReservation = ({
   price,
   dateRange,
   totalPrice,
   onChangeDate,
   onSubmit,
+  disabledDates,
   disabled,
-  disabledDates
-}) => {
+}: ListingReservationProps) => {
   return ( 
     <div 
       className="
@@ -80,7 +76,7 @@ const ListingReservation: React.FC<
         </div>
       </div>
     </div>
-   );
-}
- 
+  );
+};
+
 export default ListingReservation;

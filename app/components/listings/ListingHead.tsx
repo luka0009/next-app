@@ -1,39 +1,36 @@
-'use client';
-
-import Image from "next/image";
-
+"use client";
 import useCountries from "@/app/hooks/useCountries";
 import { SafeUser } from "@/app/types";
-
 import Heading from "../Heading";
 import HeartButton from "../HeartButton";
+import Image from "next/image";
 
-interface ListingHeadProps {
+type ListingHeadProps = {
   title: string;
-  locationValue: string;
   imageSrc: string;
+  locationValue: string;
   id: string;
-  currentUser?: SafeUser | null
-}
+  currentUser?: SafeUser | null;
+};
 
-const ListingHead: React.FC<ListingHeadProps> = ({
+const ListingHead = ({
   title,
-  locationValue,
   imageSrc,
+  locationValue,
   id,
-  currentUser
-}) => {
-  const { getByValue } = useCountries();
+  currentUser,
+}: ListingHeadProps) => {
+  const {getByValue} = useCountries();
 
   const location = getByValue(locationValue);
-
-  return ( 
+  
+  return (
     <>
-      <Heading
+        <Heading
         title={title}
         subtitle={`${location?.region}, ${location?.label}`}
-      />
-      <div className="
+        />
+         <div className="
           w-full
           h-[60vh]
           overflow-hidden 
@@ -60,8 +57,8 @@ const ListingHead: React.FC<ListingHeadProps> = ({
           />
         </div>
       </div>
-    </>
-   );
-}
- 
+    </>  
+  );
+};
+
 export default ListingHead;

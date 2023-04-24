@@ -1,65 +1,56 @@
-'use client';
-
+"use client";
 import axios from "axios";
-import { AiFillGithub } from "react-icons/ai";
-import { signIn } from "next-auth/react";
+// import { AiFillGithub } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { useCallback, useState } from "react";
-import { toast } from "react-hot-toast";
-import { 
-  FieldValues, 
-  SubmitHandler,
-  useForm
-} from "react-hook-form";
-
-import useLoginModal from "@/app/hooks/useLoginModal";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
-
+import useLoginModal from "@/app/hooks/useLoginModal";
 import Modal from "./Modal";
-import Input from "../inputs/Input";
-import Heading from "../Heading";
 import Button from "../Button";
+import Heading from "../Heading";
+import Input from "../inputs/Input";
+import { toast } from 'react-hot-toast';
+import { signIn } from "next-auth/react";
 
-const RegisterModal= () => {
+type Props = {};
+
+const RegisterModal = (props: Props) => {
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { 
-    register, 
-    handleSubmit,
-    formState: {
-      errors,
-    },
+  const {
+    register, handleSubmit, formState: {
+        errors,
+    }
   } = useForm<FieldValues>({
     defaultValues: {
-      name: '',
-      email: '',
-      password: ''
-    },
+        name: '',
+        email: '', 
+        password: '',
+    }
   });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
 
     axios.post('/api/register', data)
-    .then(() => {
-      toast.success('Registered!');
-      registerModal.onClose();
-      loginModal.onOpen();
-    })
-    .catch((error) => {
-      toast.error(error);
-    })
-    .finally(() => {
-      setIsLoading(false);
-    })
-  }
+        .then(() => {
+            toast.success('Registered succesfully');
+            registerModal.onClose();
+            loginModal.onOpen();
+        })
+        .catch((error) => {
+            toast.error("Something went wrong");
+        })
+        .finally(() => setIsLoading(false));
+  };
 
-  const onToggle = useCallback(() => {
+  const toggle = useCallback(() => {
     registerModal.onClose();
     loginModal.onOpen();
-  }, [registerModal, loginModal])
+  }, [loginModal, registerModal]);
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -104,12 +95,12 @@ const RegisterModal= () => {
         icon={FcGoogle}
         onClick={() => signIn('google')} 
       />
-      <Button 
+      {/* <Button 
         outline 
         label="Continue with Github"
         icon={AiFillGithub}
-        onClick={() => signIn('github')}
-      />
+        onClick={() => {}}
+      /> */}
       <div 
         className="
           text-neutral-500 
@@ -118,11 +109,11 @@ const RegisterModal= () => {
           font-light
         "
       >
-        <p>Already have an account?
+        <p className="text-black font-semibold">Already have an account?
           <span 
-            onClick={onToggle} 
+            onClick={toggle} 
             className="
-              text-neutral-800
+              text-black
               cursor-pointer 
               hover:underline
             "
@@ -133,17 +124,17 @@ const RegisterModal= () => {
   )
 
   return (
-    <Modal
-      disabled={isLoading}
-      isOpen={registerModal.isOpen}
-      title="Register"
-      actionLabel="Continue"
-      onClose={registerModal.onClose}
-      onSubmit={handleSubmit(onSubmit)}
-      body={bodyContent}
-      footer={footerContent}
+    <Modal 
+    disabled={isLoading}
+    isOpen={registerModal.isOpen}
+    title='Register'
+    actionLabel={'continue'}
+    onClose={registerModal.onClose}
+    onSubmit={handleSubmit(onSubmit)}
+    body={bodyContent}
+    footer={footerContent}
     />
   );
-}
+};
 
 export default RegisterModal;

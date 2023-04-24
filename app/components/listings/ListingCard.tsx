@@ -1,40 +1,33 @@
-'use client';
-
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useCallback, useMemo } from "react";
-import { format } from 'date-fns';
-
+"use client";
 import useCountries from "@/app/hooks/useCountries";
-import { 
-  SafeListing, 
-  SafeReservation, 
-  SafeUser 
-} from "@/app/types";
-
-import HeartButton from "../HeartButton";
+import { SafeReservation, SafeUser, SafeListing } from "@/app/types";
+import { Listing, Reservation, User } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import React, { useCallback, useMemo } from "react";
+import { format } from 'date-fns';
 import Button from "../Button";
-import ClientOnly from "../ClientOnly";
+import Image from "next/image";
+import HeartButton from "../HeartButton";
 
-interface ListingCardProps {
+type ListingCardProps = {
   data: SafeListing;
   reservation?: SafeReservation;
   onAction?: (id: string) => void;
   disabled?: boolean;
   actionLabel?: string;
-  actionId?: string;
-  currentUser?: SafeUser | null
+  actionId: string;
+  currentUser?: SafeUser | null;
 };
 
-const ListingCard: React.FC<ListingCardProps> = ({
+const ListingCard = ({
   data,
   reservation,
   onAction,
   disabled,
   actionLabel,
-  actionId = '',
+  actionId = "",
   currentUser,
-}) => {
+}: ListingCardProps) => {
   const router = useRouter();
   const { getByValue } = useCountries();
 
@@ -42,32 +35,31 @@ const ListingCard: React.FC<ListingCardProps> = ({
 
   const handleCancel = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+      e.stopPropagation();
 
-    if (disabled) {
-      return;
-    }
+      if (disabled) {
+        return;
+      }
 
-    onAction?.(actionId)
-  }, [disabled, onAction, actionId]);
+      onAction?.(actionId);
+    }, [onAction, actionId, disabled]);
 
   const price = useMemo(() => {
-    if (reservation) {
-      return reservation.totalPrice;
-    }
+    if(reservation) {
+        return reservation.totalPrice;
+    };
 
     return data.price;
   }, [reservation, data.price]);
 
   const reservationDate = useMemo(() => {
-    if (!reservation) {
-      return null;
+    if(!reservation) {
+        return null;
     }
-  
     const start = new Date(reservation.startDate);
     const end = new Date(reservation.endDate);
 
-    return `${format(start, 'PP')} - ${format(end, 'PP')}`;
+    return `${format(start, 'PP')} - ${format(end, 'PP')}`
   }, [reservation]);
 
   return (
@@ -92,7 +84,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
               h-full 
               w-full 
               group-hover:scale-110 
-              transition
+              transition 
+              duration-1000
             "
             src={data.imageSrc}
             alt="Listing"
@@ -109,7 +102,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
           </div>
         </div>
         <div className="font-semibold text-lg">
-          {location?.region}, {location?.label}
+        {location?.label}, {location?.region} 
         </div>
         <div className="font-light text-neutral-500">
           {reservationDate || data.category}
@@ -124,6 +117,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
         </div>
         {onAction && actionLabel && (
           <Button
+            padding={false}
             disabled={disabled}
             small
             label={actionLabel} 
@@ -132,7 +126,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
         )}
       </div>
     </div>
-   );
-}
- 
+  );
+};
+
 export default ListingCard;
